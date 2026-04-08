@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2026 d991d. All rights reserved. HomeTunnel Client -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>HomeTunnel</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- ── Titlebar ──────────────────────────────────────────────────────── -->
+  <header class="titlebar">
+    <div class="titlebar-logo">HT</div>
+    <span class="titlebar-name">HomeTunnel</span>
+    <div class="titlebar-spacer"></div>
+    <span class="titlebar-author">by <a href="#" id="author-link">d991d</a></span>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       SCREEN 1 — Connect
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="screen connect-screen active" id="screen-connect">
+
+    <div class="connect-hero">
+      <div class="connect-icon">🔒</div>
+      <div class="connect-title">Connect to HomeTunnel</div>
+      <div class="connect-subtitle">
+        Paste your invite link below<br/>to connect through a friend's server.
+      </div>
+    </div>
+
+    <!-- Error banner -->
+    <div class="error-banner" id="error-banner">
+      <span id="error-text">Connection failed.</span>
+      <span class="dismiss" id="dismiss-error">✕</span>
+    </div>
+
+    <!-- Invite link input -->
+    <div class="input-group">
+      <label class="input-label" for="invite-input">Invite Link</label>
+      <textarea class="input-field" id="invite-input"
+        placeholder="hometunnel://203.0.113.25:48321?token=..."></textarea>
+    </div>
+
+    <!-- Optional: display name -->
+    <div class="input-group">
+      <label class="input-label" for="name-input">Your Name <span style="font-weight:400;text-transform:none;letter-spacing:0">(shown to server)</span></label>
+      <input class="input-field" id="name-input" type="text"
+        placeholder="e.g. Alice" maxlength="32" style="font-family:var(--font-sans)"/>
+    </div>
+
+    <!-- Connect button -->
+    <button class="btn btn-connect" id="btn-connect">Connect</button>
+
+    <!-- Advanced section -->
+    <div class="advanced-toggle" id="toggle-advanced">Advanced ▾</div>
+
+    <div class="advanced-fields hidden" id="advanced-fields">
+      <div class="divider">or enter manually</div>
+      <div class="input-group">
+        <label class="input-label" for="server-addr">Server Address</label>
+        <input class="input-field" id="server-addr" type="text"
+          placeholder="203.0.113.25:48321"/>
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="token-input">Token</label>
+        <input class="input-field" id="token-input" type="text"
+          placeholder="paste token here"/>
+      </div>
+    </div>
+
+  </div><!-- /screen-connect -->
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       SCREEN 2 — Reconnecting
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="screen reconnect-screen" id="screen-reconnecting">
+    <div class="reconnect-spinner"></div>
+    <div class="reconnect-title">Reconnecting…</div>
+    <div class="reconnect-detail" id="reconnect-detail">Retrying in 5 s</div>
+    <button class="btn-ghost btn" id="btn-cancel-reconnect" style="width:auto;margin-top:8px">Cancel</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════════════
+       SCREEN 3 — Connected
+  ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="screen connected-screen" id="screen-connected">
+
+    <!-- Big status ring -->
+    <div class="status-hero">
+      <div class="status-ring">
+        <svg viewBox="0 0 88 88">
+          <circle class="ring-bg"   cx="44" cy="44" r="36"/>
+          <circle class="ring-fill" cx="44" cy="44" r="36" id="ring-fill"/>
+        </svg>
+        <div class="ring-label">
+          <span class="ring-emoji">🔒</span>
+          <span class="ring-status" id="ring-status-text">SECURE</span>
+        </div>
+      </div>
+      <div class="status-server-name" id="connected-name">Connected</div>
+      <div class="status-server-addr" id="connected-addr"></div>
+    </div>
+
+    <!-- Virtual IP -->
+    <div class="vip-badge">
+      <div>
+        <div class="vip-label">Your Virtual IP</div>
+        <div class="vip-value" id="val-vip">—</div>
+      </div>
+      <button class="btn-ghost btn" id="btn-copy-vip" style="width:auto;padding:6px 12px;font-size:12px">Copy</button>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Latency</span>
+        <span class="stat-value amber" id="val-latency">— ms</span>
+        <span class="stat-sub">round trip</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Duration</span>
+        <span class="stat-value blue"  id="val-duration">0:00</span>
+        <span class="stat-sub">connected</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">↓ Downloaded</span>
+        <span class="stat-value green"  id="val-bytes-in">0 B</span>
+        <span class="stat-sub">received</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">↑ Uploaded</span>
+        <span class="stat-value purple" id="val-bytes-out">0 B</span>
+        <span class="stat-sub">sent</span>
+      </div>
+    </div>
+
+    <!-- Disconnect -->
+    <button class="btn btn-disconnect" id="btn-disconnect">Disconnect</button>
+
+  </div><!-- /screen-connected -->
+
+  <!-- ── Log drawer (always visible at bottom) ─────────────────────────── -->
+  <div class="log-drawer" id="log-drawer">
+    <div class="log-drawer-header" id="log-toggle">
+      <span>▸ Logs</span>
+      <span id="log-count" style="font-size:10px">0 lines</span>
+    </div>
+    <div class="log-body" id="log-body"></div>
+  </div>
+
+</div><!-- /app -->
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

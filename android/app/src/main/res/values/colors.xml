@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2026 d991d. All rights reserved. HomeTunnel -->
+<resources>
+    <!-- Background -->
+    <color name="bg_base">#0f1117</color>
+    <color name="bg_card">#181c27</color>
+    <color name="bg_elevated">#1e2333</color>
+
+    <!-- Text -->
+    <color name="text_primary">#e8eaf0</color>
+    <color name="text_secondary">#7a8299</color>
+
+    <!-- Accent / status -->
+    <color name="accent">#00c896</color>
+    <color name="status_green">#00c896</color>
+    <color name="status_amber">#f5a623</color>
+    <color name="error">#e05252</color>
+
+    <!-- Material theme overrides -->
+    <color name="purple_200">#00c896</color>
+    <color name="purple_500">#00c896</color>
+    <color name="purple_700">#00a07a</color>
+    <color name="teal_200">#00c896</color>
+    <color name="teal_700">#00a07a</color>
+</resources>

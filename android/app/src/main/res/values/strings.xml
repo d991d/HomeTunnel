@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2026 d991d. All rights reserved. HomeTunnel -->
+<resources>
+    <string name="app_name">HomeTunnel</string>
+    <string name="connect">Connect</string>
+    <string name="disconnect">Disconnect</string>
+    <string name="cancel">Cancel</string>
+    <string name="connecting">Connecting…</string>
+    <string name="reconnecting">Reconnecting…</string>
+    <string name="connected">Connected</string>
+    <string name="vpn_channel_name">HomeTunnel VPN</string>
+    <string name="vpn_channel_desc">HomeTunnel VPN connection status</string>
+    <string name="invite_link_hint">Invite link (hometunnel://…)</string>
+    <string name="display_name_hint">Your name (optional)</string>
+    <string name="server_addr_hint">Server address (1.2.3.4:7788)</string>
+    <string name="token_hint">Token</string>
+    <string name="paste_clipboard">Paste from clipboard</string>
+    <string name="advanced">▼ Advanced</string>
+    <string name="hide_advanced">▲ Hide advanced</string>
+    <string name="copied">Copied to clipboard</string>
+</resources>

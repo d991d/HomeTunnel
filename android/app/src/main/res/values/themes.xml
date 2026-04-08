@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2026 d991d. All rights reserved. HomeTunnel -->
+<resources>
+    <style name="Theme.HomeTunnel" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/accent</item>
+        <item name="colorPrimaryVariant">@color/status_amber</item>
+        <item name="colorOnPrimary">@color/bg_base</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/status_amber</item>
+        <item name="colorOnSecondary">@color/bg_base</item>
+        <item name="colorError">@color/error</item>
+        <item name="android:colorBackground">@color/bg_base</item>
+        <item name="android:windowBackground">@color/bg_base</item>
+        <item name="android:statusBarColor">@color/bg_card</item>
+        <item name="android:navigationBarColor">@color/bg_card</item>
+
+        <!-- TextInputLayout outline color -->
+        <item name="boxStrokeColor">@color/text_secondary</item>
+        <item name="hintTextColor">@color/text_secondary</item>
+    </style>
+</resources>

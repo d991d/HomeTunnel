@@ -1,0 +1,57 @@
+# HomeTunnel — .gitignore
+# Copyright (c) 2026 d991d
+
+# ─── Compiled binaries ────────────────────────────────────────────────────────
+dist/
+*.exe
+*.dll
+*.so
+*.dylib
+*.aar
+*.apk
+
+# ─── Server config (contains secret key — NEVER commit) ──────────────────────
+server.json
+client.json
+
+# ─── Go build cache ───────────────────────────────────────────────────────────
+vendor/
+
+# ─── WinTUN driver (must be downloaded separately) ───────────────────────────
+wintun.dll
+
+# ─── macOS ────────────────────────────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ─── Windows ──────────────────────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+
+# ─── Linux ────────────────────────────────────────────────────────────────────
+*~
+
+# ─── IDE / editor ─────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+/tmp/hometunnel_pf.conf
+
+# Electron
+ui/electron/node_modules/
+ui/electron/package-lock.json
+ui/electron-client/node_modules/
+ui/electron-client/package-lock.json
+
+# Android
+android/.gradle/
+android/local.properties
+android/app/build/
+android/build/
+android/app/libs/*.aar
+!android/app/libs/.gitkeep

@@ -1,0 +1,50 @@
+{
+  "name": "hometunnel-client",
+  "version": "1.0.0",
+  "description": "HomeTunnel Client",
+  "author": "d991d",
+  "private": true,
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack:mac": "electron-builder --mac",
+    "pack:win": "electron-builder --win",
+    "pack:linux": "electron-builder --linux"
+  },
+  "devDependencies": {
+    "electron": "^41.2.0",
+    "electron-builder": "^24.0.0"
+  },
+  "build": {
+    "appId": "io.github.d991d.hometunnel-client",
+    "productName": "HomeTunnel",
+    "copyright": "Copyright © 2026 d991d",
+    "files": [
+      "main.js",
+      "preload.js",
+      "renderer/**/*",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "../../dist/",
+        "to": "bin/",
+        "filter": ["hometunnel-client*"]
+      }
+    ],
+    "mac": {
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.utilities",
+      "target": [{ "target": "dmg", "arch": ["universal"] }]
+    },
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "linux": {
+      "icon": "assets/icon.png",
+      "target": [{ "target": "AppImage", "arch": ["x64"] }],
+      "category": "Network"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "listen_addr": "0.0.0.0:443",
+  "public_ip": "",
+  "vpn_subnet": "10.8.0.0/24",
+  "server_vip": "10.8.0.1",
+  "mtu": 1380,
+  "dns_servers": [
+    "1.1.1.1",
+    "8.8.8.8"
+  ],
+  "secret_key": "65ad63a315cc0abf626655ea75bf336e6479585b934e92945ac09938216b90c7",
+  "token_ttl": 259200000000000,
+  "max_auth_fails": 5,
+  "block_timeout": 600000000000,
+  "obfuscation": {
+    "enabled": true,
+    "header_xor": true,
+    "padding_max_bytes": 127,
+    "traffic_shaping": false,
+    "port_mimicry": "none"
+  },
+  "log_level": "info",
+  "log_file": "",
+  "api_addr": "127.0.0.1:7777"
+}

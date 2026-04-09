@@ -22,9 +22,11 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
+	"strings"
 	"sync"
 	"time"
 
@@ -371,9 +373,35 @@ func randomID() string {
 	return base64.RawURLEncoding.EncodeToString(b)
 }
 
-// DetectPublicIP attempts to find the server's public IPv4 via a STUN-like
-// approach: dial an external UDP address and check the local source IP.
+// DetectPublicIP queries external services to find the server's real public IPv4.
+// Falls back to the local interface IP if all services are unreachable.
 func DetectPublicIP() string {
+	services := []string{
+		"https://api.ipify.org",
+		"https://ipv4.icanhazip.com",
+		"https://checkip.amazonaws.com",
+		"https://api4.my-ip.io/ip",
+	}
+	client := &http.Client{Timeout: 5 * time.Second}
+	for _, svc := range services {
+		resp, err := client.Get(svc)
+		if err != nil {
+			continue
+		}
+		body, err := io.ReadAll(io.LimitReader(resp.Body, 64))
+		resp.Body.Close()
+		if err != nil {
+			continue
+		}
+		ip := strings.TrimSpace(string(body))
+		if net.ParseIP(ip) != nil {
+			log.Printf("[server] public IP detected via %s: %s", svc, ip)
+			return ip
+		}
+	}
+	// Last resort: use the outbound LAN interface address
+	log.Printf("[server] WARNING: could not detect public IP — using LAN IP. " +
+		"Set \"public_ip\" in server.json to override.")
 	conn, err := net.Dial("udp4", "8.8.8.8:53")
 	if err != nil {
 		return "unknown"

@@ -64,7 +64,7 @@ type ObfuscationConfig struct {
 // DefaultServerConfig returns a sensible default configuration.
 func DefaultServerConfig() *ServerConfig {
 	return &ServerConfig{
-		ListenAddr:   "0.0.0.0:48321",
+		ListenAddr:   "0.0.0.0:443",
 		VPNSubnet:    "10.8.0.0/24",
 		ServerVIP:    "10.8.0.1",
 		MTU:          1380,
@@ -73,7 +73,7 @@ func DefaultServerConfig() *ServerConfig {
 		MaxAuthFails: 5,
 		BlockTimeout: 10 * time.Minute,
 		Obfuscation: ObfuscationConfig{
-			Enabled:         false,
+			Enabled:         true,
 			HeaderXOR:       true,
 			PaddingMaxBytes: 127,
 			TrafficShaping:  false,
@@ -116,7 +116,7 @@ func DefaultClientConfig() *ClientConfig {
 		MTU:               1380,
 		LogLevel:          "info",
 		Obfuscation: ObfuscationConfig{
-			Enabled:         false,
+			Enabled:         true,
 			HeaderXOR:       true,
 			PaddingMaxBytes: 127,
 		},

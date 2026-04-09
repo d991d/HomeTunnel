@@ -40,6 +40,7 @@ import (
 	"github.com/d991d/hometunnel/core/transport"
 	"github.com/d991d/hometunnel/core/tunnel"
 	"github.com/d991d/hometunnel/shared/protocol"
+	"github.com/d991d/hometunnel/shared/config"
 )
 
 // ─── IPC message types ────────────────────────────────────────────────────────
@@ -176,8 +177,17 @@ func (c *Client) connectLoop(ctx context.Context, serverAddr, token, displayName
 }
 
 func (c *Client) doConnect(ctx context.Context, serverAddr, token, displayName string) error {
-	// Dial UDP
-	conn, err := transport.Dial(serverAddr)
+	// Dial UDP — obfuscation settings must match the server's config.
+	// We use the default config values (enabled=true, headerXOR=true, paddingMaxBytes=127)
+	// so HomeTunnel traffic is indistinguishable from random noise on any port.
+	obfsCfg := config.DefaultClientConfig().Obfuscation
+	conn, err := transport.Dial(serverAddr, transport.DialOptions{
+		Obfuscation: transport.ObfuscationConfig{
+			Enabled:         obfsCfg.Enabled,
+			PaddingMaxBytes: obfsCfg.PaddingMaxBytes,
+			HeaderXOR:       obfsCfg.HeaderXOR,
+		},
+	})
 	if err != nil {
 		return fmt.Errorf("dial: %w", err)
 	}

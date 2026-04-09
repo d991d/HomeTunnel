@@ -120,8 +120,14 @@ func main() {
 			log.Printf("[server] warn: NAT setup: %v", err)
 		}
 
-		// Open UDP listener
-		udpConn, err = transport.Listen(cfg.ListenAddr)
+		// Open UDP listener (with obfuscation if enabled)
+		udpConn, err = transport.Listen(cfg.ListenAddr, transport.ListenOptions{
+			Obfuscation: transport.ObfuscationConfig{
+				Enabled:         cfg.Obfuscation.Enabled,
+				PaddingMaxBytes: cfg.Obfuscation.PaddingMaxBytes,
+				HeaderXOR:       cfg.Obfuscation.HeaderXOR,
+			},
+		})
 		if err != nil {
 			tun.Close()
 			return fmt.Errorf("transport: %w", err)

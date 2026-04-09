@@ -6,12 +6,14 @@
 // ─── State ────────────────────────────────────────────────────────────────────
 
 const state = {
-  serverRunning: false,
-  clients:       [],
-  invites:       [],
-  pollTimer:     null,
-  totalBytesIn:  0,
-  totalBytesOut: 0,
+  serverRunning:  false,
+  clients:        [],
+  invites:        [],
+  pollTimer:      null,
+  totalBytesIn:   0,
+  totalBytesOut:  0,
+  pollCount:      0,   // total polls attempted
+  failedPolls:    0,   // consecutive failed polls
 };
 
 // ─── DOM refs ─────────────────────────────────────────────────────────────────
@@ -91,11 +93,23 @@ function copyToClipboard(text) {
 // ─── Status polling ───────────────────────────────────────────────────────────
 
 async function fetchStatus() {
+  state.pollCount++;
   const res = await window.ht.api('GET', '/api/status');
+
   if (!res.ok) {
-    setServerStopped();
+    state.failedPolls++;
+    // Show "Connecting..." for the first 4 failures (~10 seconds grace period)
+    // so users don't panic and click Start while the server is still initialising.
+    if (state.failedPolls <= 4) {
+      setServerConnecting();
+    } else {
+      setServerStopped();
+    }
     return;
   }
+
+  // Successful API response
+  state.failedPolls = 0;
   const d = res.body;
   state.serverRunning = d.running;
 
@@ -195,6 +209,13 @@ function setServerStopped() {
   els.valUptime.textContent   = '—';
 }
 
+function setServerConnecting() {
+  els.statusBadge.className   = 'badge badge-starting';
+  els.statusBadge.textContent = 'Connecting…';
+  els.btnStart.disabled       = true;
+  els.btnStop.disabled        = true;
+}
+
 function setServerStarting() {
   els.statusBadge.className   = 'badge badge-starting';
   els.statusBadge.textContent = 'Starting…';
@@ -203,15 +224,36 @@ function setServerStarting() {
 }
 
 els.btnStart.addEventListener('click', async () => {
+  // First check if the server is already running via the API
   setServerStarting();
-  const res = await window.ht.api('POST', '/api/server/start');
-  if (res.ok) {
-    showToast('Server started');
-    setTimeout(fetchStatus, 800);
-  } else {
-    showToast(res.body?.error || 'Failed to start', 'error');
-    setServerStopped();
+  const statusRes = await window.ht.api('GET', '/api/status');
+
+  if (statusRes.ok && statusRes.body?.running) {
+    // Server is already running — just refresh the display
+    showToast('Server is running');
+    await fetchStatus();
+    return;
   }
+
+  // Server not running — open Terminal to start it with sudo
+  showToast('Opening Terminal to start the server…', 'info');
+  await window.ht.spawnServer();
+
+  // Poll until the server comes up (up to ~30 seconds)
+  let attempts = 0;
+  const poll = setInterval(async () => {
+    attempts++;
+    const r = await window.ht.api('GET', '/api/status');
+    if (r.ok && r.body?.running) {
+      clearInterval(poll);
+      showToast('Server started!');
+      await fetchStatus();
+    } else if (attempts >= 20) {
+      clearInterval(poll);
+      showToast('Server did not start. Check the Terminal window.', 'error');
+      setServerStopped();
+    }
+  }, 1500);
 });
 
 els.btnStop.addEventListener('click', async () => {

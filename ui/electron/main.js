@@ -3,7 +3,7 @@
 
 'use strict';
 
-const { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, Tray, Menu, nativeImage, dialog, net } = require('electron');
 const path       = require('path');
 const fs         = require('fs');
 const http       = require('http');
@@ -53,12 +53,19 @@ function getServerCwd() {
 
 function isServerRunning() {
   return new Promise((resolve) => {
-    const req = http.get(
-      { hostname: '127.0.0.1', port: 7777, path: '/api/status', timeout: 1500 },
-      (res) => { res.resume(); resolve(res.statusCode < 500); }
-    );
-    req.on('error',   () => resolve(false));
-    req.on('timeout', () => { req.destroy(); resolve(false); });
+    let req;
+    try { req = net.request({ method: 'GET', url: API_BASE + '/api/status' }); }
+    catch { resolve(false); return; }
+
+    const timer = setTimeout(() => { try { req.abort(); } catch {} resolve(false); }, 2000);
+
+    req.on('response', (res) => {
+      clearTimeout(timer);
+      res.resume();
+      resolve(res.statusCode < 500);
+    });
+    req.on('error', () => { clearTimeout(timer); resolve(false); });
+    req.end();
   });
 }
 
@@ -228,46 +235,46 @@ function createTray() {
 // ─── IPC handlers ─────────────────────────────────────────────────────────────
 
 /**
- * Proxy API calls from renderer → Go server.
- * Always resolves within IPC_TIMEOUT ms — prevents the UI from hanging
- * when the server is offline.
+ * Proxy API calls from renderer → Go server using electron.net (Chromium stack).
+ * electron.net reliably reaches localhost servers regardless of which user
+ * started them — avoids the Node.js http module's cross-user localhost issue.
+ * Always resolves within IPC_TIMEOUT ms.
  */
 ipcMain.handle('api', async (_event, method, endpoint, body) => {
   const apiCall = new Promise((resolve) => {
-    const url     = new URL(API_BASE + endpoint);
-    const options = {
-      hostname: url.hostname,
-      port:     url.port,
-      path:     url.pathname + url.search,
-      method:   method.toUpperCase(),
-      headers:  { 'Content-Type': 'application/json' },
-      timeout:  API_TIMEOUT,
-    };
+    let req;
+    try {
+      req = net.request({
+        method:  method.toUpperCase(),
+        url:     API_BASE + endpoint,
+        timeout: API_TIMEOUT,
+      });
+    } catch (e) {
+      resolve({ ok: false, body: { error: e.message } });
+      return;
+    }
 
-    const req = http.request(options, (res) => {
+    req.on('response', (res) => {
       let data = '';
-      res.on('data', (c) => { data += c; });
-      res.on('end', () => {
+      res.on('data',  (c) => { data += c; });
+      res.on('end',   () => {
         try { resolve({ ok: res.statusCode < 400, status: res.statusCode, body: JSON.parse(data) }); }
         catch { resolve({ ok: false, status: res.statusCode, body: data }); }
       });
+      res.on('error', (e) => resolve({ ok: false, body: { error: e.message } }));
     });
 
-    req.on('error', (e) => resolve({
-      ok: false,
-      body: {
-        error: e.code === 'ECONNREFUSED'
-          ? 'Server is not running yet. Please wait for it to start.'
-          : e.message,
-      },
-    }));
-
-    req.on('timeout', () => {
-      req.destroy();
-      resolve({ ok: false, body: { error: 'Server is not responding. Please try again.' } });
+    req.on('error', (e) => {
+      const msg = (e.message || '').includes('ECONNREFUSED') || (e.message || '').includes('CONNECTION_REFUSED')
+        ? 'Server is not running yet. Please wait for it to start.'
+        : e.message;
+      resolve({ ok: false, body: { error: msg } });
     });
 
-    if (body) req.write(JSON.stringify(body));
+    if (body) {
+      req.setHeader('Content-Type', 'application/json');
+      req.write(JSON.stringify(body));
+    }
     req.end();
   });
 

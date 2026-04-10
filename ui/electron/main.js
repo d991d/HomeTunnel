@@ -193,6 +193,8 @@ function createWindow() {
       preload:          path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration:  false,
+      webSecurity:      false, // allows renderer to fetch http://127.0.0.1:7777 directly
+      sandbox:          false, // allow preload to use require() for npm packages (e.g. qrcode)
     },
   });
 
@@ -200,6 +202,8 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+    // Open DevTools for debugging — remove once dashboard connectivity is confirmed
+    mainWindow.webContents.openDevTools({ mode: 'detach' });
     initServer();
   });
 

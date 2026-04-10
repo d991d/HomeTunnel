@@ -3,8 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"/>
+  <!-- CSP removed: local Electron app talks only to 127.0.0.1:7777 -->
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>HomeTunnel</title>
   <link rel="stylesheet" href="style.css"/>
@@ -58,6 +57,9 @@
               <button class="btn btn-red"   id="btn-stop" disabled>■ Stop</button>
             </div>
           </div>
+          <!-- Connection error shown here so users can diagnose without DevTools -->
+          <div id="debug-msg" style="font-size:11px;color:#f59e0b;margin:4px 0 0 2px;min-height:14px"></div>
+
           <div class="status-grid">
             <div class="status-item">
               <span class="status-label">Public IP</span>

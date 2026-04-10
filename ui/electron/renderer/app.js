@@ -3,6 +3,61 @@
 
 'use strict';
 
+// ─── API helper ───────────────────────────────────────────────────────────────
+//
+// Primary path: IPC bridge → electron.net (main process).
+//   electron.net is Chromium's network stack running in the PRIVILEGED main
+//   process.  It bypasses CORS, CSP, and Node.js localhost cross-user issues.
+//
+// Fallback path: direct fetch() in the renderer.
+//   Works when webSecurity:false is set in BrowserWindow and the server sends
+//   Access-Control-Allow-Origin: * (now fixed in the Go server).
+
+const API = 'http://127.0.0.1:7777';
+
+// debugLog pushes a line into the Logs panel without replacing existing logs.
+function debugLog(msg) {
+  const logBox = document.getElementById('log-box');
+  if (!logBox) return;
+  const div = document.createElement('div');
+  div.className = 'log-line warn';
+  div.textContent = `[debug] ${msg}`;
+  logBox.appendChild(div);
+  if (logBox.children.length > 500) logBox.removeChild(logBox.firstChild);
+  logBox.scrollTop = logBox.scrollHeight;
+}
+
+async function api(method, endpoint, body) {
+  // ── Primary: IPC bridge (electron.net, no CORS restrictions) ──────────────
+  try {
+    if (window.ht && typeof window.ht.api === 'function') {
+      const res = await window.ht.api(method, endpoint, body);
+      // IPC resolved — return whatever the Go server sent back
+      return res;
+    }
+  } catch (ipcErr) {
+    debugLog(`IPC error on ${method} ${endpoint}: ${ipcErr.message}`);
+  }
+
+  // ── Fallback: direct fetch() ───────────────────────────────────────────────
+  try {
+    const opts = { method, signal: AbortSignal.timeout(6000) };
+    if (body) {
+      opts.headers = { 'Content-Type': 'application/json' };
+      opts.body    = JSON.stringify(body);
+    }
+    // No Content-Type on GET/DELETE — avoids CORS preflight for those methods
+    const res  = await fetch(API + endpoint, opts);
+    let data;
+    try { data = await res.json(); } catch { data = {}; }
+    return { ok: res.ok, status: res.status, body: data };
+  } catch (fetchErr) {
+    const msg = fetchErr.message || 'Could not reach server';
+    debugLog(`Fetch error on ${method} ${endpoint}: ${msg}`);
+    return { ok: false, body: { error: msg } };
+  }
+}
+
 // ─── State ────────────────────────────────────────────────────────────────────
 
 const state = {
@@ -94,22 +149,24 @@ function copyToClipboard(text) {
 
 async function fetchStatus() {
   state.pollCount++;
-  const res = await window.ht.api('GET', '/api/status');
+  const res = await api('GET', '/api/status');
 
   if (!res.ok) {
     state.failedPolls++;
-    // Show "Connecting..." for the first 4 failures (~10 seconds grace period)
-    // so users don't panic and click Start while the server is still initialising.
-    if (state.failedPolls <= 4) {
-      setServerConnecting();
+    const errMsg = res.body?.error || 'No response from server';
+    // Show "Connecting..." for the first 6 failures (~15 seconds grace period)
+    // so users don't panic while the server is still initialising.
+    if (state.failedPolls <= 6) {
+      setServerConnecting(errMsg);
     } else {
-      setServerStopped();
+      setServerStopped(errMsg);
     }
     return;
   }
 
   // Successful API response
   state.failedPolls = 0;
+  setDebugMsg('');                        // clear any previous error
   const d = res.body;
   state.serverRunning = d.running;
 
@@ -125,7 +182,7 @@ async function fetchStatus() {
 }
 
 async function fetchClients() {
-  const res = await window.ht.api('GET', '/api/clients');
+  const res = await api('GET', '/api/clients');
   if (!res.ok) return;
 
   state.clients = res.body || [];
@@ -164,7 +221,7 @@ function renderClientsTable() {
 }
 
 async function fetchLogs() {
-  const res = await window.ht.api('GET', '/api/logs');
+  const res = await api('GET', '/api/logs');
   if (!res.ok) return;
   const lines = res.body?.lines || [];
   renderLogs(lines);
@@ -190,16 +247,22 @@ function esc(s) {
     .replace(/"/g,'&quot;');
 }
 
-// ─── Server start / stop ──────────────────────────────────────────────────────
+// ─── Server state display ─────────────────────────────────────────────────────
+
+function setDebugMsg(msg) {
+  const el = document.getElementById('debug-msg');
+  if (el) el.textContent = msg;
+}
 
 function setServerRunning() {
   els.statusBadge.className   = 'badge badge-running';
   els.statusBadge.textContent = 'Running';
   els.btnStart.disabled       = true;
   els.btnStop.disabled        = false;
+  setDebugMsg('');
 }
 
-function setServerStopped() {
+function setServerStopped(errMsg) {
   els.statusBadge.className   = 'badge badge-stopped';
   els.statusBadge.textContent = 'Stopped';
   els.btnStart.disabled       = false;
@@ -207,13 +270,15 @@ function setServerStopped() {
   els.valIp.textContent       = '—';
   els.valPort.textContent     = '—';
   els.valUptime.textContent   = '—';
+  setDebugMsg(errMsg || '');
 }
 
-function setServerConnecting() {
+function setServerConnecting(errMsg) {
   els.statusBadge.className   = 'badge badge-starting';
   els.statusBadge.textContent = 'Connecting…';
   els.btnStart.disabled       = true;
   els.btnStop.disabled        = true;
+  setDebugMsg(errMsg || '');
 }
 
 function setServerStarting() {
@@ -221,12 +286,13 @@ function setServerStarting() {
   els.statusBadge.textContent = 'Starting…';
   els.btnStart.disabled       = true;
   els.btnStop.disabled        = true;
+  setDebugMsg('');
 }
 
 els.btnStart.addEventListener('click', async () => {
   // First check if the server is already running via the API
   setServerStarting();
-  const statusRes = await window.ht.api('GET', '/api/status');
+  const statusRes = await api('GET', '/api/status');
 
   if (statusRes.ok && statusRes.body?.running) {
     // Server is already running — just refresh the display
@@ -237,13 +303,13 @@ els.btnStart.addEventListener('click', async () => {
 
   // Server not running — open Terminal to start it with sudo
   showToast('Opening Terminal to start the server…', 'info');
-  await window.ht.spawnServer();
+  await window.ht.spawnServer().catch(() => {});
 
   // Poll until the server comes up (up to ~30 seconds)
   let attempts = 0;
   const poll = setInterval(async () => {
     attempts++;
-    const r = await window.ht.api('GET', '/api/status');
+    const r = await api('GET', '/api/status');
     if (r.ok && r.body?.running) {
       clearInterval(poll);
       showToast('Server started!');
@@ -257,7 +323,7 @@ els.btnStart.addEventListener('click', async () => {
 });
 
 els.btnStop.addEventListener('click', async () => {
-  const res = await window.ht.api('POST', '/api/server/stop');
+  const res = await api('POST', '/api/server/stop');
   if (res.ok) {
     showToast('Server stopped');
     setServerStopped();
@@ -311,7 +377,7 @@ $('btn-modal-generate').addEventListener('click', async () => {
   $('btn-modal-generate').disabled = true;
   $('btn-modal-generate').textContent = 'Generating…';
 
-  const res = await window.ht.api('POST', '/api/invite', {
+  const res = await api('POST', '/api/invite', {
     display_name: name,
     ttl_hours:    ttl,
   });
@@ -374,7 +440,7 @@ function renderInvites() {
 }
 
 async function revokeInvite(id) {
-  const res = await window.ht.api('DELETE', `/api/invite?id=${id}`);
+  const res = await api('DELETE', `/api/invite?id=${id}`);
   if (res.ok) {
     const inv = state.invites.find((i) => i.id === id);
     if (inv) inv.revoked = true;
@@ -398,23 +464,29 @@ $('btn-clear-logs').addEventListener('click', () => {
 $('btn-refresh-logs').addEventListener('click', fetchLogs);
 
 // Receive live log lines from the Go process via main process IPC
-window.ht.onServerLog((line) => {
-  const cls = /error|fatal/i.test(line) ? 'err'
-            : /warn/i.test(line)        ? 'warn'
-            : /connected|✓/i.test(line) ? 'ok'
-            : 'info';
-  const div = document.createElement('div');
-  div.className = `log-line ${cls}`;
-  div.textContent = line;
-  els.logBox.appendChild(div);
-  if (els.logBox.children.length > 500) els.logBox.removeChild(els.logBox.firstChild);
-  els.logBox.scrollTop = els.logBox.scrollHeight;
-});
+// Guard: if preload failed to load (e.g. missing npm deps), window.ht is undefined
+if (window.ht) {
+  window.ht.onServerLog((line) => {
+    const cls = /error|fatal/i.test(line) ? 'err'
+              : /warn/i.test(line)        ? 'warn'
+              : /connected|✓/i.test(line) ? 'ok'
+              : 'info';
+    const div = document.createElement('div');
+    div.className = `log-line ${cls}`;
+    div.textContent = line;
+    els.logBox.appendChild(div);
+    if (els.logBox.children.length > 500) els.logBox.removeChild(els.logBox.firstChild);
+    els.logBox.scrollTop = els.logBox.scrollHeight;
+  });
 
-window.ht.onServerStopped((code) => {
-  setServerStopped();
-  showToast(`Server process exited (code ${code})`, 'error');
-});
+  window.ht.onServerStopped((code) => {
+    setServerStopped();
+    showToast(`Server process exited (code ${code})`, 'error');
+  });
+} else {
+  console.error('[app] window.ht is undefined — preload.js failed to load. Run: npm install');
+  setDebugMsg('Preload failed. Run: npm install  in ui/electron folder, then restart.');
+}
 
 // ─── QR Code ──────────────────────────────────────────────────────────────────
 
@@ -428,7 +500,12 @@ window.ht.onServerStopped((code) => {
  */
 function drawQR(text, canvas) {
   // Use qrcode via the context bridge (preload.js exposes window.ht.drawQR)
-  window.ht.drawQR(canvas, text).catch(() => drawQRFallback(text, canvas));
+  if (window.ht && typeof window.ht.drawQR === 'function') {
+    window.ht.drawQR(canvas, text).catch(() => drawQRFallback(text, canvas));
+  } else {
+    // Preload not available (qrcode npm package not installed) — show text fallback
+    drawQRFallback(text, canvas);
+  }
 }
 
 function drawQRFallback(text, canvas) {
@@ -468,9 +545,41 @@ function startPolling() {
   state.pollTimer = setInterval(pollAll, 2500);
 }
 
+// ─── Startup diagnostic ───────────────────────────────────────────────────────
+// Runs 2 s after load.  Results appear in the DevTools Console AND in the
+// amber debug-msg element under the status badge.  Remove after confirming fix.
+
+async function runStartupDiagnostic() {
+  const out = [];
+  out.push(`window.ht: ${typeof window.ht}`);
+  out.push(`window.ht.api: ${typeof window.ht?.api}`);
+
+  // IPC test
+  try {
+    const r = await window.ht.api('GET', '/api/status');
+    out.push(`IPC ok=${r.ok} body=${JSON.stringify(r.body).slice(0, 80)}`);
+  } catch (e) {
+    out.push(`IPC threw: ${e.message}`);
+  }
+
+  // Direct fetch test
+  try {
+    const r = await fetch('http://127.0.0.1:7777/api/status');
+    const text = await r.text();
+    out.push(`fetch ${r.status}: ${text.slice(0, 80)}`);
+  } catch (e) {
+    out.push(`fetch threw: ${e.message}`);
+  }
+
+  const msg = out.join(' | ');
+  console.log('[diagnostic]', msg);
+  setDebugMsg(msg);   // shows under the badge
+}
+
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   startPolling();
   renderInvites();
+  setTimeout(runStartupDiagnostic, 2000);
 });

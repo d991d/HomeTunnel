@@ -356,7 +356,10 @@ func jsonErr(w http.ResponseWriter, msg string, code int) {
 
 func withCORS(fn http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost")
+		// Allow all origins — the API binds to 127.0.0.1 only so this is safe.
+		// Electron loads the renderer from file:// which has a "null" origin;
+		// using "*" ensures the browser never rejects the response.
+		w.Header().Set("Access-Control-Allow-Origin", "*")
 		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
 		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 		if r.Method == http.MethodOptions {

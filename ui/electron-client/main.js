@@ -18,17 +18,26 @@ let isQuitting = false;
 // ─── Go client binary path ────────────────────────────────────────────────────
 
 function getClientBinPath() {
-  const ext     = process.platform === 'win32' ? '.exe' : '';
-  const binName = `hometunnel-client${ext}`;
+  const isWin  = process.platform === 'win32';
+  const isMac  = process.platform === 'darwin';
+  const ext    = isWin ? '.exe' : '';
 
-  // Packaged build
-  const packed = path.join(process.resourcesPath || '', 'bin', binName);
-  if (fs.existsSync(packed)) return packed;
+  // Platform-specific suffix used by the Makefile
+  const suffix = isWin  ? '-windows-amd64'
+               : isMac  ? '-darwin-universal'
+               :           '-linux-amd64';
 
-  // Development: ../../dist/
-  const dev = path.join(__dirname, '..', '..', 'dist', binName);
-  if (fs.existsSync(dev)) return dev;
+  // Search order: packaged (suffixed) → packaged (plain) → dev (suffixed) → dev (plain)
+  const candidates = [
+    path.join(process.resourcesPath || '', 'bin', `hometunnel-client${suffix}${ext}`),
+    path.join(process.resourcesPath || '', 'bin', `hometunnel-client${ext}`),
+    path.join(__dirname, '..', '..', 'dist', `hometunnel-client${suffix}${ext}`),
+    path.join(__dirname, '..', '..', 'dist', `hometunnel-client${ext}`),
+  ];
 
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
   return null;
 }
 
@@ -46,6 +55,8 @@ function spawnGoClient() {
   console.log('[main] spawning Go client:', bin);
   goClient = spawn(bin, [], {
     stdio: ['pipe', 'pipe', 'pipe'],
+    // Run in the binary's own directory so wintun.dll is found on Windows
+    cwd: path.dirname(bin),
   });
 
   // Parse newline-delimited JSON events from stdout
@@ -117,6 +128,9 @@ ipcMain.handle('client-cmd', (_event, cmd) => {
   return true;
 });
 
+// Provide platform info to renderer
+ipcMain.handle('get-platform', () => process.platform);
+
 // Open a URL in the system browser
 ipcMain.on('open-external', (_e, url) => shell.openExternal(url));
 
@@ -137,6 +151,7 @@ function createWindow() {
       preload:          path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration:  false,
+      sandbox:          false, // allow preload to use require() for npm packages
     },
   });
 

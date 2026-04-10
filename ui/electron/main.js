@@ -202,8 +202,6 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
-    // Open DevTools for debugging — remove once dashboard connectivity is confirmed
-    mainWindow.webContents.openDevTools({ mode: 'detach' });
     initServer();
   });
 

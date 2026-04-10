@@ -357,8 +357,17 @@ $('author-link').addEventListener('click', (e) => {
 });
 
 // Auto-focus invite input on load
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   el.inviteInput.focus();
   // Ask Go engine for its current state (in case it was already connected)
   window.ht.send({ cmd: 'status' });
+
+  // Show Windows admin notice if running on Windows
+  try {
+    const platform = await window.ht.getPlatform();
+    if (platform === 'win32') {
+      const notice = document.getElementById('admin-notice');
+      if (notice) notice.style.display = '';
+    }
+  } catch (_) {}
 });

@@ -27,4 +27,7 @@ contextBridge.exposeInMainWorld('ht', {
 
   /** Open a URL in the system default browser. */
   openExternal: (url) => ipcRenderer.send('open-external', url),
+
+  /** Returns the OS platform string ('win32', 'darwin', 'linux'). */
+  getPlatform: () => ipcRenderer.invoke('get-platform'),
 });

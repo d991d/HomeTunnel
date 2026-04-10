@@ -3,8 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"/>
+  <!-- No restrictive CSP: local Electron app, no external resources -->
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>HomeTunnel</title>
   <link rel="stylesheet" href="style.css"/>
@@ -30,6 +29,10 @@
       <div class="connect-title">Connect to HomeTunnel</div>
       <div class="connect-subtitle">
         Paste your invite link below<br/>to connect through a friend's server.
+      </div>
+      <!-- Windows-only admin notice — hidden on other platforms via JS -->
+      <div class="admin-notice" id="admin-notice" style="display:none">
+        ⚠ Windows: HomeTunnel must run as Administrator to create the VPN tunnel.
       </div>
     </div>
 

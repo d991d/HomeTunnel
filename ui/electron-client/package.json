@@ -29,7 +29,10 @@
       {
         "from": "../../dist/",
         "to": "bin/",
-        "filter": ["hometunnel-client*"]
+        "filter": [
+          "hometunnel-client*",
+          "wintun.dll"
+        ]
       }
     ],
     "mac": {
@@ -39,7 +42,16 @@
     },
     "win": {
       "icon": "assets/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator",
       "target": [{ "target": "nsis", "arch": ["x64"] }]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "HomeTunnel"
     },
     "linux": {
       "icon": "assets/icon.png",

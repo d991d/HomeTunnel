@@ -545,41 +545,9 @@ function startPolling() {
   state.pollTimer = setInterval(pollAll, 2500);
 }
 
-// ─── Startup diagnostic ───────────────────────────────────────────────────────
-// Runs 2 s after load.  Results appear in the DevTools Console AND in the
-// amber debug-msg element under the status badge.  Remove after confirming fix.
-
-async function runStartupDiagnostic() {
-  const out = [];
-  out.push(`window.ht: ${typeof window.ht}`);
-  out.push(`window.ht.api: ${typeof window.ht?.api}`);
-
-  // IPC test
-  try {
-    const r = await window.ht.api('GET', '/api/status');
-    out.push(`IPC ok=${r.ok} body=${JSON.stringify(r.body).slice(0, 80)}`);
-  } catch (e) {
-    out.push(`IPC threw: ${e.message}`);
-  }
-
-  // Direct fetch test
-  try {
-    const r = await fetch('http://127.0.0.1:7777/api/status');
-    const text = await r.text();
-    out.push(`fetch ${r.status}: ${text.slice(0, 80)}`);
-  } catch (e) {
-    out.push(`fetch threw: ${e.message}`);
-  }
-
-  const msg = out.join(' | ');
-  console.log('[diagnostic]', msg);
-  setDebugMsg(msg);   // shows under the badge
-}
-
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   startPolling();
   renderInvites();
-  setTimeout(runStartupDiagnostic, 2000);
 });

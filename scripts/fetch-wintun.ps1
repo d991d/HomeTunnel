@@ -19,7 +19,7 @@ $ErrorActionPreference = "Stop"
 # ── constants ──────────────────────────────────────────────────────────────────
 $WINTUN_VERSION = "0.14.1"
 $WINTUN_URL     = "https://www.wintun.net/builds/wintun-$WINTUN_VERSION.zip"
-$WINTUN_SHA256  = "c7f5d8c46e38bd63e4b65e9a30baaed82218dd35ec5a4c9dea7df89ffe0b01ba"
+$WINTUN_SHA256  = "07c256185d6ee3652e09fa55c0b673e2624b565e02c4b9091c79ca7d2f24ef51"
 $ZIP_NAME       = "wintun-$WINTUN_VERSION.zip"
 $TMP            = [System.IO.Path]::GetTempPath()
 $ZIP_PATH       = Join-Path $TMP $ZIP_NAME

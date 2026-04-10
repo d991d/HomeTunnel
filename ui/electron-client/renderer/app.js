@@ -106,14 +106,19 @@ function copyToClipboard(text) {
 }
 
 // Parse invite link: hometunnel://HOST:PORT?token=TOKEN
+//
+// ⚠ Do NOT use the URL API here — converting hometunnel:// → https:// causes
+// the browser to strip port 443 (the HTTPS default), losing the port entirely.
+// We parse the link with a regex instead, which preserves all ports.
 function parseInviteLink(link) {
   link = link.trim();
   try {
-    // Support both hometunnel:// and vpn://
-    const normalized = link.replace(/^(hometunnel|vpn):\/\//, 'https://');
-    const url = new URL(normalized);
-    const addr  = url.host;                   // "203.0.113.25:48321"
-    const token = url.searchParams.get('token');
+    // Regex: scheme://host:port?token=TOKEN (or any other query params)
+    const m = link.match(/^(?:hometunnel|vpn):\/\/([^/?#]+)(?:\?(.*))?$/i);
+    if (!m) return null;
+    const addr   = m[1];                               // "108.173.26.147:443"
+    const params = new URLSearchParams(m[2] || '');
+    const token  = params.get('token');
     if (!addr || !token) return null;
     return { addr, token };
   } catch {

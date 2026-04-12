@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<!-- Copyright (c) 2026 d991d. All rights reserved. HomeTunnel Server Dashboard -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>HomeTunnel</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="layout">
+
+  <!-- ── Titlebar ────────────────────────────────────────────────────────── -->
+  <header class="titlebar">
+    <div class="titlebar-logo">HT</div>
+    <span class="titlebar-name">HomeTunnel</span>
+    <span class="titlebar-version">v1.0.0</span>
+    <div class="titlebar-spacer"></div>
+    <span class="titlebar-author">by <a href="#" id="author-link">d991d</a></span>
+  </header>
+
+  <div class="main">
+
+    <!-- ── Sidebar ──────────────────────────────────────────────────────── -->
+    <nav class="sidebar">
+      <div class="nav-item active" data-panel="dashboard">
+        <span class="icon">⬡</span> Dashboard
+      </div>
+      <div class="nav-item" data-panel="clients">
+        <span class="icon">◎</span> Clients
+      </div>
+      <div class="nav-item" data-panel="invites">
+        <span class="icon">⬡</span> Invites
+      </div>
+      <div class="nav-item" data-panel="logs">
+        <span class="icon">≡</span> Logs
+      </div>
+      <div class="sidebar-spacer"></div>
+      <div class="sidebar-footer">HomeTunnel &copy; 2026 d991d</div>
+    </nav>
+
+    <!-- ── Content ──────────────────────────────────────────────────────── -->
+    <div class="content">
+
+      <!-- DASHBOARD PANEL -->
+      <div class="panel active" id="panel-dashboard">
+
+        <!-- Status card -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Server Status</span>
+            <div style="display:flex;gap:8px;align-items:center">
+              <span class="badge badge-starting" id="status-badge">Connecting…</span>
+              <button class="btn btn-green" id="btn-start" disabled>▶ Start</button>
+              <button class="btn btn-red"   id="btn-stop" disabled>■ Stop</button>
+            </div>
+          </div>
+          <div class="status-grid">
+            <div class="status-item">
+              <span class="status-label">Public IP</span>
+              <span class="status-value mono" id="val-ip">—</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Port</span>
+              <span class="status-value mono" id="val-port">—</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">Uptime</span>
+              <span class="status-value mono" id="val-uptime">—</span>
+            </div>
+            <div class="status-item">
+              <span class="status-label">VPN Subnet</span>
+              <span class="status-value mono" id="val-subnet">10.8.0.0/24</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats row -->
+        <div class="stats-row">
+          <div class="stat-box">
+            <span class="stat-label">Connected</span>
+            <span class="stat-value blue" id="stat-clients">0</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Total ↓ In</span>
+            <span class="stat-value green" id="stat-bytes-in">0 B</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-label">Total ↑ Out</span>
+            <span class="stat-value purple" id="stat-bytes-out">0 B</span>
+          </div>
+        </div>
+
+        <!-- Quick actions -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Quick Actions</span>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-blue" id="btn-new-invite">+ New Invite Link</button>
+            <button class="btn btn-ghost" id="btn-copy-ip">⎘ Copy Server Address</button>
+          </div>
+        </div>
+
+      </div><!-- /panel-dashboard -->
+
+      <!-- CLIENTS PANEL -->
+      <div class="panel" id="panel-clients">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Connected Clients</span>
+            <span id="client-count" style="font-size:12px;color:var(--text-muted)">0 online</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Virtual IP</th>
+                  <th>Real Address</th>
+                  <th>↓ In</th>
+                  <th>↑ Out</th>
+                  <th>Connected</th>
+                </tr>
+              </thead>
+              <tbody id="clients-body">
+                <tr><td colspan="6">
+                  <div class="empty-state">
+                    <div class="empty-icon">◎</div>
+                    No clients connected
+                  </div>
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div><!-- /panel-clients -->
+
+      <!-- INVITES PANEL -->
+      <div class="panel" id="panel-invites">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Invite Links</span>
+            <button class="btn btn-blue" id="btn-new-invite-2">+ New Invite</button>
+          </div>
+          <div id="invites-list">
+            <div class="empty-state">
+              <div class="empty-icon">⬡</div>
+              No invites generated yet
+            </div>
+          </div>
+        </div>
+      </div><!-- /panel-invites -->
+
+      <!-- LOGS PANEL -->
+      <div class="panel" id="panel-logs">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Server Logs</span>
+            <div style="display:flex;gap:8px">
+              <button class="btn btn-ghost" id="btn-clear-logs">Clear</button>
+              <button class="btn btn-ghost" id="btn-refresh-logs">↻ Refresh</button>
+            </div>
+          </div>
+          <div class="log-box" id="log-box"></div>
+        </div>
+      </div><!-- /panel-logs -->
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- ── Invite Modal ───────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+
+    <!-- Step 1: form -->
+    <div id="modal-step-form">
+      <div class="modal-title">Create Invite Link</div>
+
+      <div class="modal-row">
+        <label class="modal-label" for="invite-name">Friend's Name</label>
+        <input class="modal-input" id="invite-name" type="text" placeholder="e.g. Alice" maxlength="32"/>
+      </div>
+
+      <div class="modal-row">
+        <label class="modal-label" for="invite-ttl">Expires In</label>
+        <select class="modal-input" id="invite-ttl">
+          <option value="24">24 hours</option>
+          <option value="72" selected>3 days</option>
+          <option value="168">7 days</option>
+          <option value="720">30 days</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="btn-modal-cancel">Cancel</button>
+        <button class="btn btn-blue" id="btn-modal-generate">Generate</button>
+      </div>
+    </div>
+
+    <!-- Step 2: result -->
+    <div id="modal-step-result" style="display:none">
+      <div class="modal-title">Share with your friend</div>
+
+      <div class="modal-row">
+        <span class="modal-label">Invite Link</span>
+        <div class="modal-link-box">
+          <span class="modal-link-text" id="modal-link-text"></span>
+          <button class="btn btn-ghost" id="btn-copy-link" style="padding:4px 10px;font-size:12px">Copy</button>
+        </div>
+      </div>
+
+      <div class="modal-row">
+        <span class="modal-label">QR Code</span>
+        <div class="qr-wrap">
+          <canvas id="qr-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-blue" id="btn-modal-done">Done</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

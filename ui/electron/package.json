@@ -12,6 +12,7 @@
     "pack:linux": "electron-builder --linux"
   },
   "dependencies": {
+    "buffer-equal": "^1.0.1",
     "qrcode": "^1.5.4"
   },
   "devDependencies": {
@@ -29,6 +30,13 @@
       "assets/**/*"
     ],
     "extraResources": [
+      {
+        "from": "../../hometunnel/dist/",
+        "to": "bin/",
+        "filter": [
+          "hometunnel-server*"
+        ]
+      },
       {
         "from": "../../dist/",
         "to": "bin/",

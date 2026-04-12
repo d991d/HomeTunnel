@@ -30,18 +30,23 @@ function getServerBinPath() {
   const ext    = isWin ? '.exe' : '';
   const suffix = isMac ? '-darwin-universal' : (isWin ? '' : '-linux-amd64');
 
-  // Packaged build
-  const packed = path.join(process.resourcesPath || '', 'bin', `hometunnel-server${ext}`);
-  if (fs.existsSync(packed)) return packed;
+  const candidates = [
+    // Packaged .app — with suffix (primary)
+    path.join(process.resourcesPath || '', 'bin', `hometunnel-server${suffix}${ext}`),
+    // Packaged .app — without suffix (fallback)
+    path.join(process.resourcesPath || '', 'bin', `hometunnel-server${ext}`),
+    // Development — vpn-project/hometunnel/dist/ (where make puts binaries)
+    path.join(__dirname, '..', '..', 'hometunnel', 'dist', `hometunnel-server${suffix}${ext}`),
+    // Development — vpn-project/dist/
+    path.join(__dirname, '..', '..', 'dist', `hometunnel-server${suffix}${ext}`),
+    // Generic fallbacks
+    path.join(__dirname, '..', '..', 'hometunnel', 'dist', `hometunnel-server${ext}`),
+    path.join(__dirname, '..', '..', 'dist', `hometunnel-server${ext}`),
+  ];
 
-  // Development — two levels up from ui/electron/
-  const dev = path.join(__dirname, '..', '..', 'dist', `hometunnel-server${suffix}${ext}`);
-  if (fs.existsSync(dev)) return dev;
-
-  // Generic fallback
-  const generic = path.join(__dirname, '..', '..', 'dist', `hometunnel-server${ext}`);
-  if (fs.existsSync(generic)) return generic;
-
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
   return null;
 }
 
@@ -111,6 +116,9 @@ function openTerminalToStartServer() {
     `cd "${cwd}"`,
     'echo "You will be asked for your Mac password to start the VPN server."',
     'echo ""',
+    '# Remove quarantine and ad-hoc sign the binary (required on macOS for unsigned binaries)',
+    `sudo xattr -d com.apple.quarantine "${bin}" 2>/dev/null || true`,
+    `sudo codesign --sign - --force "${bin}" 2>/dev/null || true`,
     `sudo "${bin}"`,
     '',
   ].join('\n'), { mode: 0o755 });

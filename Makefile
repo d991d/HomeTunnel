@@ -9,6 +9,8 @@
 #   make macos        — server + client for macOS (amd64 + arm64 universal)
 #   make windows      — server + client for Windows amd64
 #   make android      — Go core .aar for Android (requires gomobile)
+#   make ios-framework — Go core .xcframework for iOS (requires gomobile + Xcode)
+#   make ios          — build iOS xcframework + generate Xcode project (requires xcodegen)
 #   make clean        — remove dist/
 
 GO      := go
@@ -25,7 +27,7 @@ LDFLAGS := -ldflags="-s -w \
   -X '$(MODULE)/shared/config.Version=$(VERSION)' \
   -X '$(MODULE)/shared/config.BuildDate=$(BUILD)'"
 
-.PHONY: all server client linux macos windows android apk apk-release clean deps test test-short wintun wintun-win
+.PHONY: all server client linux macos windows android apk apk-release ios ios-framework clean deps test test-short wintun wintun-win
 
 all: linux macos windows
 
@@ -70,11 +72,15 @@ macos-server:
 		-o $(OUTDIR)/hometunnel-server-darwin-amd64 ./server
 	GOOS=darwin GOARCH=arm64 $(GO) build $(LDFLAGS) \
 		-o $(OUTDIR)/hometunnel-server-darwin-arm64 ./server
+	# Ad-hoc sign each arch BEFORE lipo — required for codesign to accept the fat binary
+	codesign --sign - --force $(OUTDIR)/hometunnel-server-darwin-amd64 2>/dev/null || true
+	codesign --sign - --force $(OUTDIR)/hometunnel-server-darwin-arm64 2>/dev/null || true
 	lipo -create -output $(OUTDIR)/hometunnel-server-darwin-universal \
 		$(OUTDIR)/hometunnel-server-darwin-amd64 \
 		$(OUTDIR)/hometunnel-server-darwin-arm64 2>/dev/null || \
 		cp $(OUTDIR)/hometunnel-server-darwin-arm64 \
 		   $(OUTDIR)/hometunnel-server-darwin-universal
+	codesign --sign - --force $(OUTDIR)/hometunnel-server-darwin-universal 2>/dev/null || true
 	@echo "✓  $(OUTDIR)/hometunnel-server-darwin-universal"
 
 macos-client:
@@ -83,11 +89,15 @@ macos-client:
 		-o $(OUTDIR)/hometunnel-client-darwin-amd64 ./client/desktop
 	GOOS=darwin GOARCH=arm64 $(GO) build $(LDFLAGS) \
 		-o $(OUTDIR)/hometunnel-client-darwin-arm64 ./client/desktop
+	# Ad-hoc sign each arch BEFORE lipo
+	codesign --sign - --force $(OUTDIR)/hometunnel-client-darwin-amd64 2>/dev/null || true
+	codesign --sign - --force $(OUTDIR)/hometunnel-client-darwin-arm64 2>/dev/null || true
 	lipo -create -output $(OUTDIR)/hometunnel-client-darwin-universal \
 		$(OUTDIR)/hometunnel-client-darwin-amd64 \
 		$(OUTDIR)/hometunnel-client-darwin-arm64 2>/dev/null || \
 		cp $(OUTDIR)/hometunnel-client-darwin-arm64 \
 		   $(OUTDIR)/hometunnel-client-darwin-universal
+	codesign --sign - --force $(OUTDIR)/hometunnel-client-darwin-universal 2>/dev/null || true
 	@echo "✓  $(OUTDIR)/hometunnel-client-darwin-universal"
 
 # ─── Windows ──────────────────────────────────────────────────────────────────
@@ -106,29 +116,49 @@ windows-client:
 		-o $(OUTDIR)/hometunnel-client-windows-amd64.exe ./client/desktop
 	@echo "✓  $(OUTDIR)/hometunnel-client-windows-amd64.exe"
 
+# ─── iOS (requires gomobile + Xcode + xcodegen) ───────────────────────────────
+
+ios: ios-framework
+	@command -v xcodegen >/dev/null 2>&1 || { echo "✗  xcodegen not found. Install: brew install xcodegen"; exit 1; }
+	cd ios && xcodegen generate
+	@echo "✓  HomeTunnel.xcodeproj generated — open ios/HomeTunnel.xcodeproj in Xcode"
+
+ios-framework:
+	@command -v gomobile >/dev/null 2>&1 || { echo "✗  gomobile not found. Install: go install golang.org/x/mobile/cmd/gomobile@latest && gomobile init"; exit 1; }
+	@mkdir -p ios/Frameworks
+	@rm -rf ios/Frameworks/HometunnelCore.xcframework
+	gomobile bind \
+		-target=ios,iossimulator \
+		-iosversion=16.0 \
+		-ldflags="-s -w" \
+		-o ios/Frameworks/HometunnelCore.xcframework \
+		$(MODULE)/core/mobile
+	@echo "✓  ios/Frameworks/HometunnelCore.xcframework"
+
 # ─── Android (requires gomobile) ──────────────────────────────────────────────
 
 android:
 	@mkdir -p $(OUTDIR)
-	gomobile bind \
+	cd hometunnel && gomobile bind \
 		-target=android/arm64,android/amd64 \
 		-androidapi 26 \
 		-ldflags="-s -w" \
-		-o $(OUTDIR)/hometunnel-core-android.aar \
+		-o ../$(OUTDIR)/hometunnel-core-android.aar \
 		$(MODULE)/core/mobile
-	cp $(OUTDIR)/hometunnel-core-android.aar android/app/libs/hometunnel-core-android.aar
+	@mkdir -p hometunnel/android/app/libs
+	cp $(OUTDIR)/hometunnel-core-android.aar hometunnel/android/app/libs/hometunnel-core-android.aar
 	@echo "✓  $(OUTDIR)/hometunnel-core-android.aar"
-	@echo "✓  android/app/libs/hometunnel-core-android.aar"
+	@echo "✓  hometunnel/android/app/libs/hometunnel-core-android.aar"
 
 # Build debug APK (requires Android SDK + Gradle)
 apk: android
-	cd android && ./gradlew assembleDebug
-	@echo "✓  android/app/build/outputs/apk/debug/app-debug.apk"
+	cd hometunnel/android && ./gradlew assembleDebug
+	@echo "✓  hometunnel/android/app/build/outputs/apk/debug/app-debug.apk"
 
-# Build release APK
+# Build release APK (signed with debug key — replace signingConfig for production)
 apk-release: android
-	cd android && ./gradlew assembleRelease
-	@echo "✓  android/app/build/outputs/apk/release/app-release.apk"
+	cd hometunnel/android && ./gradlew assembleRelease
+	@echo "✓  hometunnel/android/app/build/outputs/apk/release/app-release-unsigned.apk"
 
 # ─── WinTUN ───────────────────────────────────────────────────────────────────
 

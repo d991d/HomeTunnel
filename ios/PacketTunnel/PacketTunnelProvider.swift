@@ -149,11 +149,16 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     }
 
     private func deviceName() -> String {
-#if os(iOS)
-        return UIDevice.current.name
-#else
-        return Host.current().localizedName ?? "iPhone"
-#endif
+        // UIDevice is not available in Network Extensions (no UIKit linkage).
+        // Use uname() syscall which works in any process.
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let deviceModel = withUnsafePointer(to: &systemInfo.nodename) {
+            $0.withMemoryRebound(to: CChar.self, capacity: 256) {
+                String(cString: $0)
+            }
+        }
+        return deviceModel.isEmpty ? "iPhone" : deviceModel
     }
 
     private func htError(_ msg: String) -> NSError {

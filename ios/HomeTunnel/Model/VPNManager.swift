@@ -52,6 +52,17 @@ final class VPNManager: ObservableObject {
     // ── Connect / Disconnect ──────────────────────────────────────────────────
 
     func connect(serverAddr: String, token: String) {
+#if targetEnvironment(simulator)
+        // Simulator: Network Extensions don't run — simulate the flow visually
+        status = .connecting
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.status    = .connected
+            self.virtualIP = "10.8.0.2"
+            self.bytesIn   = 0
+            self.bytesOut  = 0
+            self.startSimulatorStats()
+        }
+#else
         guard let manager = manager else { return }
 
         let proto = NETunnelProviderProtocol()
@@ -67,18 +78,39 @@ final class VPNManager: ObservableObject {
         Task {
             do {
                 try await manager.saveToPreferences()
-                // Reload so the system picks up the saved config
                 try await manager.loadFromPreferences()
                 try (manager.connection as! NETunnelProviderSession).startTunnel(options: nil)
             } catch {
                 print("[VPNManager] startTunnel error: \(error)")
             }
         }
+#endif
     }
 
     func disconnect() {
+#if targetEnvironment(simulator)
+        stopSimulatorStats()
+        status = .disconnected
+        virtualIP = ""; bytesIn = 0; bytesOut = 0
+#else
         manager?.connection.stopVPNTunnel()
+#endif
     }
+
+#if targetEnvironment(simulator)
+    private func startSimulatorStats() {
+        statsTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in
+            Task { @MainActor in
+                self?.bytesIn  += Int64.random(in: 10_000...500_000)
+                self?.bytesOut += Int64.random(in: 1_000...50_000)
+            }
+        }
+    }
+    private func stopSimulatorStats() {
+        statsTimer?.invalidate()
+        statsTimer = nil
+    }
+#endif
 
     // ── Status observer ───────────────────────────────────────────────────────
 

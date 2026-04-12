@@ -1,0 +1,568 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0E126E3EA33C6504F300CA42 /* ConnectingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD6FF759ED0BC0A95728BF0A /* ConnectingView.swift */; };
+		27741729BCC652754426DE91 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E67E18FBE377435CDBA15A14 /* Assets.xcassets */; };
+		32D5E3EF644D6605C3F1943B /* HometunnelCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D0711E3CF469B1498BE5607 /* HometunnelCore.xcframework */; };
+		52D5563EF2932D979F106102 /* PacketTunnel.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = AB6B3EE8F41205D1619A7261 /* PacketTunnel.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		6FDA017572BC96E621D0A59D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE974A4392CEB62776F3326F /* ContentView.swift */; };
+		7E7E91756F2D0D667A86B6C8 /* PacketTunnelProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 213A6979D51DC8370EC56631 /* PacketTunnelProvider.swift */; };
+		9DD0AE218706CA3E86A6099E /* HometunnelCore.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8D0711E3CF469B1498BE5607 /* HometunnelCore.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		9E7EE9E4DAE7DFB415E8F969 /* VPNManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770E2C166ED5FFB49C58A1A /* VPNManager.swift */; };
+		BAE4C18D625412E24D4FEE57 /* ConnectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4F6E00C53CEBBEE421153B /* ConnectView.swift */; };
+		E2F848C2E2469FEACDA358FC /* ConnectedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C55C045DD9F2384BB7E36D07 /* ConnectedView.swift */; };
+		EBAA3E0D31F48D06A73701F2 /* HomeTunnelApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC71558D15ED775085A4ECF /* HomeTunnelApp.swift */; };
+		FA32E4E2641E3A5FAEF113E2 /* HometunnelCore.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D0711E3CF469B1498BE5607 /* HometunnelCore.xcframework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E69AFB5863613D5408A90429 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 50413E196055749D03F090AC /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4B7C605BD10745E43EE7FDB9;
+			remoteInfo = PacketTunnel;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3990ABB49466788E793E5970 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				52D5563EF2932D979F106102 /* PacketTunnel.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		45488DE8F9B20D85B6316CEF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9DD0AE218706CA3E86A6099E /* HometunnelCore.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		213A6979D51DC8370EC56631 /* PacketTunnelProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketTunnelProvider.swift; sourceTree = "<group>"; };
+		2A4F6E00C53CEBBEE421153B /* ConnectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectView.swift; sourceTree = "<group>"; };
+		8D0711E3CF469B1498BE5607 /* HometunnelCore.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HometunnelCore.xcframework; path = Frameworks/HometunnelCore.xcframework; sourceTree = "<group>"; };
+		A087B30A23E11773E5CF6AD0 /* PacketTunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PacketTunnel.entitlements; sourceTree = "<group>"; };
+		AB6B3EE8F41205D1619A7261 /* PacketTunnel.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = PacketTunnel.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		B770E2C166ED5FFB49C58A1A /* VPNManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VPNManager.swift; sourceTree = "<group>"; };
+		BEF9252BD7698B6B73B1AE40 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C55C045DD9F2384BB7E36D07 /* ConnectedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectedView.swift; sourceTree = "<group>"; };
+		CD6FF759ED0BC0A95728BF0A /* ConnectingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectingView.swift; sourceTree = "<group>"; };
+		D2B7B1C9D6D7D8E3F44F3F3C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DB01B115FFBCC3973DF7AF19 /* HomeTunnel.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HomeTunnel.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E67E18FBE377435CDBA15A14 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		EB4FC1602E346135E815DE76 /* HomeTunnel.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = HomeTunnel.entitlements; sourceTree = "<group>"; };
+		FE974A4392CEB62776F3326F /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		FEC71558D15ED775085A4ECF /* HomeTunnelApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeTunnelApp.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		57F0C61619FF300487FD1FC6 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FA32E4E2641E3A5FAEF113E2 /* HometunnelCore.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		768006B70B00012BBD44F12B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32D5E3EF644D6605C3F1943B /* HometunnelCore.xcframework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1B147D8BCA777993C48106BE /* HomeTunnel */ = {
+			isa = PBXGroup;
+			children = (
+				E67E18FBE377435CDBA15A14 /* Assets.xcassets */,
+				EB4FC1602E346135E815DE76 /* HomeTunnel.entitlements */,
+				BEF9252BD7698B6B73B1AE40 /* Info.plist */,
+				C55707F51ADBFD87A07C5B73 /* App */,
+				ECD9DE189F147E907CC3ECA7 /* Model */,
+				C2C2F754BC83E117FF5E9613 /* Views */,
+			);
+			path = HomeTunnel;
+			sourceTree = "<group>";
+		};
+		3E09C053640B249454078A3E = {
+			isa = PBXGroup;
+			children = (
+				1B147D8BCA777993C48106BE /* HomeTunnel */,
+				E623C20D441E40E6858C8D40 /* PacketTunnel */,
+				EFEE4AEAB0A1CD1174EB981F /* Frameworks */,
+				D7510D6F748EB2DD03817F93 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C2C2F754BC83E117FF5E9613 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C55C045DD9F2384BB7E36D07 /* ConnectedView.swift */,
+				CD6FF759ED0BC0A95728BF0A /* ConnectingView.swift */,
+				2A4F6E00C53CEBBEE421153B /* ConnectView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C55707F51ADBFD87A07C5B73 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				FE974A4392CEB62776F3326F /* ContentView.swift */,
+				FEC71558D15ED775085A4ECF /* HomeTunnelApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		D7510D6F748EB2DD03817F93 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB01B115FFBCC3973DF7AF19 /* HomeTunnel.app */,
+				AB6B3EE8F41205D1619A7261 /* PacketTunnel.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E623C20D441E40E6858C8D40 /* PacketTunnel */ = {
+			isa = PBXGroup;
+			children = (
+				D2B7B1C9D6D7D8E3F44F3F3C /* Info.plist */,
+				A087B30A23E11773E5CF6AD0 /* PacketTunnel.entitlements */,
+				213A6979D51DC8370EC56631 /* PacketTunnelProvider.swift */,
+			);
+			path = PacketTunnel;
+			sourceTree = "<group>";
+		};
+		ECD9DE189F147E907CC3ECA7 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				B770E2C166ED5FFB49C58A1A /* VPNManager.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		EFEE4AEAB0A1CD1174EB981F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				8D0711E3CF469B1498BE5607 /* HometunnelCore.xcframework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		28DD39D5317BD6A6A55CA89B /* HomeTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9982B6029997769AEFD7C55E /* Build configuration list for PBXNativeTarget "HomeTunnel" */;
+			buildPhases = (
+				33DA1A1852FB1C67E040832B /* Check Go framework */,
+				6AE2615B0BD6C29521FDD882 /* Sources */,
+				3BE5BCDF954BDA6A18EB4FF9 /* Resources */,
+				57F0C61619FF300487FD1FC6 /* Frameworks */,
+				3990ABB49466788E793E5970 /* Embed Foundation Extensions */,
+				45488DE8F9B20D85B6316CEF /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				EB3552376490A68D7E580568 /* PBXTargetDependency */,
+			);
+			name = HomeTunnel;
+			packageProductDependencies = (
+			);
+			productName = HomeTunnel;
+			productReference = DB01B115FFBCC3973DF7AF19 /* HomeTunnel.app */;
+			productType = "com.apple.product-type.application";
+		};
+		4B7C605BD10745E43EE7FDB9 /* PacketTunnel */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C4C746B13F4276496AB35937 /* Build configuration list for PBXNativeTarget "PacketTunnel" */;
+			buildPhases = (
+				60712F2779A7E5C086300A34 /* Sources */,
+				768006B70B00012BBD44F12B /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PacketTunnel;
+			packageProductDependencies = (
+			);
+			productName = PacketTunnel;
+			productReference = AB6B3EE8F41205D1619A7261 /* PacketTunnel.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		50413E196055749D03F090AC /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					28DD39D5317BD6A6A55CA89B = {
+						ProvisioningStyle = Automatic;
+					};
+					4B7C605BD10745E43EE7FDB9 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 596C3271DCD65A94CDE9D787 /* Build configuration list for PBXProject "HomeTunnel" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 3E09C053640B249454078A3E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D7510D6F748EB2DD03817F93 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				28DD39D5317BD6A6A55CA89B /* HomeTunnel */,
+				4B7C605BD10745E43EE7FDB9 /* PacketTunnel */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3BE5BCDF954BDA6A18EB4FF9 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				27741729BCC652754426DE91 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		33DA1A1852FB1C67E040832B /* Check Go framework */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Check Go framework";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [ ! -d \"${SRCROOT}/Frameworks/HometunnelCore.xcframework\" ]; then\n  echo \"error: HometunnelCore.xcframework not found.\"\n  echo \"error: Run 'make ios-framework' from the vpn-project root first.\"\n  exit 1\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		60712F2779A7E5C086300A34 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E7E91756F2D0D667A86B6C8 /* PacketTunnelProvider.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6AE2615B0BD6C29521FDD882 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BAE4C18D625412E24D4FEE57 /* ConnectView.swift in Sources */,
+				E2F848C2E2469FEACDA358FC /* ConnectedView.swift in Sources */,
+				0E126E3EA33C6504F300CA42 /* ConnectingView.swift in Sources */,
+				6FDA017572BC96E621D0A59D /* ContentView.swift in Sources */,
+				EBAA3E0D31F48D06A73701F2 /* HomeTunnelApp.swift in Sources */,
+				9E7EE9E4DAE7DFB415E8F969 /* VPNManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		EB3552376490A68D7E580568 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4B7C605BD10745E43EE7FDB9 /* PacketTunnel */;
+			targetProxy = E69AFB5863613D5408A90429 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		4223051386D6BE3522BF5E34 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_BITCODE = NO;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Release;
+		};
+		88C42A562279C7F165729F5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HomeTunnel/HomeTunnel.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WT4MKCRR7T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				INFOPLIST_FILE = HomeTunnel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.d991d.hometunnel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9FC72376D8AF464483447E6A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WT4MKCRR7T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				INFOPLIST_FILE = PacketTunnel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.d991d.hometunnel.PacketTunnel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C561C77675A3BCDF0E5545AF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_BITCODE = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.9;
+			};
+			name = Debug;
+		};
+		C5DBE91F3D5133AAFAA577A3 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = HomeTunnel/HomeTunnel.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WT4MKCRR7T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				INFOPLIST_FILE = HomeTunnel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.d991d.hometunnel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		ECFB3F1A6395C487F13C735A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = WT4MKCRR7T;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"Frameworks\"",
+				);
+				INFOPLIST_FILE = PacketTunnel/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.github.d991d.hometunnel.PacketTunnel;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		596C3271DCD65A94CDE9D787 /* Build configuration list for PBXProject "HomeTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C561C77675A3BCDF0E5545AF /* Debug */,
+				4223051386D6BE3522BF5E34 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		9982B6029997769AEFD7C55E /* Build configuration list for PBXNativeTarget "HomeTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				88C42A562279C7F165729F5C /* Debug */,
+				C5DBE91F3D5133AAFAA577A3 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C4C746B13F4276496AB35937 /* Build configuration list for PBXNativeTarget "PacketTunnel" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FC72376D8AF464483447E6A /* Debug */,
+				ECFB3F1A6395C487F13C735A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 50413E196055749D03F090AC /* Project object */;
+}
